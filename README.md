@@ -12,40 +12,20 @@ Like dwm, dwl is:
 - Limited to 2200 SLOC to promote hackability
 - Tied to as few external dependencies as possible
 
-dwl is not meant to provide every feature under the sun. Instead, like dwm, it
-sticks to features which are necessary, simple, and straightforward to implement
-given the base on which it is built. Implemented default features are:
+[Read full info on]: https://github.com/djpohly/dwl
 
-- Any features provided by dwm/Xlib: simple window borders, tags, keybindings,
-  client rules, mouse move/resize. Providing a built-in status bar is an
-  exception to this goal, to avoid dependencies on font rendering and/or
-  drawing libraries when an external bar could work well.
-- Configurable multi-monitor layout support, including position and rotation
-- Configurable HiDPI/multi-DPI support
-- Idle-inhibit protocol which lets applications such as mpv disable idle
-  monitoring
-- Provide information to external status bars via stdout/stdin
-- Urgency hints via xdg-activate protocol
-- Support screen lockers via input-inhibitor protocol
-- Various Wayland protocols
-- XWayland support as provided by wlroots (can be enabled in `config.mk`)
-- Zero flickering - Wayland users naturally expect that "every frame is perfect"
-- Layer shell popups (used by Waybar)
-- Damage tracking provided by scenegraph API
+# Mariusz's build
 
-Features under consideration (possibly as patches) are:
+## Patches:
+- Smart borders that make unneeded borders go away
+- Float move by key makes it possible to move you floating windows using arrow keys
+- Top center float allows for defining where you want the newly appeared floating windows to be
+- Cursor wrap moves the mouse to the center of newly focused window (some day I would like to make
+it so that it remembers the last position on a given window (any pr requests/suggesions are welcome!)
+- Equal column layout
 
-- Protocols made trivial by wlroots
-- Implement the text-input and input-method protocols to support IME once ibus
-  implements input-method v2 (see https://github.com/ibus/ibus/pull/2256 and
-  https://github.com/djpohly/dwl/pull/235)
-
-Feature *non-goals* for the main codebase include:
-
-- Client-side decoration (any more than is necessary to tell the clients not to)
-- Client-initiated window management, such as move, resize, and close, which can
-  be done through the compositor
-- Animations and visual effects
+## Config
+One that integrates nicely with [wayrice]: https://github.com/Kuchteq/wayrice
 
 ## Building dwl
 

@@ -1,0 +1,39 @@
+diff --git a/dwl.c b/dwl.c
+index 1b59c21..b1a422a 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -274,6 +274,8 @@ static void maximizenotify(struct wl_listener *listener, void *data);
+ static void monocle(Monitor *m);
+ static void motionabsolute(struct wl_listener *listener, void *data);
+ static void motionnotify(uint32_t time);
++static void floatvmovebykey(const Arg *arg);
++static void floathmovebykey(const Arg *arg);
+ static void motionrelative(struct wl_listener *listener, void *data);
+ static void moveresize(const Arg *arg);
+ static void outputmgrapply(struct wl_listener *listener, void *data);
+@@ -1623,7 +1625,25 @@ motionabsolute(struct wl_listener *listener, void *data)
+ 	wlr_cursor_warp_absolute(cursor, &event->pointer->base, event->x, event->y);
+ 	motionnotify(event->time_msec);
+ }
++void floatvmovebykey(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++	if (!sel || client_is_unmanaged(sel) || sel->isfullscreen)
++		return;
++	setfloating(sel, 1);
++	resize(sel, (struct wlr_box){.x = sel->geom.x + arg->i, .y = sel->geom.y,
++	.width = sel->geom.width, .height = sel->geom.height}, 1, 1);
++}
+ 
++void floathmovebykey(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++	if (!sel || client_is_unmanaged(sel) || sel->isfullscreen)
++		return;
++	setfloating(sel, 1);
++	resize(sel, (struct wlr_box){.x = sel->geom.x, .y = sel->geom.y + arg->i,
++	.width = sel->geom.width, .height = sel->geom.height}, 1, 1);
++}
+ void
+ motionnotify(uint32_t time)
+ {

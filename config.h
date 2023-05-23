@@ -167,6 +167,7 @@ static const Key keys[] = {
 	{WLR_MODIFIER_CTRL,       XKB_KEY_F12,      spawn,                 {.v = (const char*[]){ "screensend", NULL } } },
 	{MODKEY,       XKB_KEY_Print,      spawn,               {.v = (const char*[]){ "showshot", NULL } } },
 	{MODKEY|WLR_MODIFIER_CTRL,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-c", NULL } } },
+	{MODKEY|WLR_MODIFIER_SHIFT,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-d", NULL } } },
 	{WLR_MODIFIER_SHIFT,    XKB_KEY_Print,      spawn,      {.v = (const char*[]){ "screensave", NULL } } },
 	{MODKEY,    XKB_KEY_F12,      spawn,                 {.v = (const char*[]) {"dswitch", NULL } } },
 	{MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_B,      spawn,      {.v = (const char*[]){ "bookmarkselect", NULL } } },
@@ -179,7 +180,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT|WLR_MODIFIER_CTRL, XKB_KEY_S,    spawn,    SHCMD("kill -45 $(pidof someblocks)") },
 	{ MODKEY,         XKB_KEY_b,    spawn,    {.v = (const char*[]) {"somebar", "-c", "toggle", "selected", NULL } }},
 	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,         XKB_KEY_space,      spawn,       SHCMD("kill -45 $(pidof someblocks)")},
-	{ 0,         XKB_KEY_XF86TouchpadOn,      spawn,       {.v = passsummon }
+	{ 0,         XKB_KEY_XF86TouchpadOn,      spawn,       {.v = passsummon }},
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
 	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),
@@ -188,7 +189,7 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_6, XKB_KEY_asciicircum,                5),
 	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                  6),
 	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                   7),
-	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8)},
+	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8),
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server    */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },

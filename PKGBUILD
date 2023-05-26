@@ -27,6 +27,6 @@ build() {
 
 package() {
 	cd ../
-	make PREFIX="$pkgdir/usr/local/" install
+	make PREFIX="$pkgdir/usr" install
 }
 

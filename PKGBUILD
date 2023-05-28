@@ -28,5 +28,7 @@ build() {
 package() {
 	cd ../
 	make PREFIX="$pkgdir/usr" install
+	# Delete src folder created by makepkg if empty and unneeded
+	[ -z "$(ls -A ./src)" ] && rmdir ./src
 }
 

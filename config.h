@@ -15,6 +15,7 @@ static const int tagcount = 9;
 static const Rule rules[] = {
 	/* app_id     title                            tags mask  isfloatingTop   monitor */
 	{ "firefox",    "Firefox — Sharing Indicator",  0,         1,	  -1, -1 },
+	{ "LibreWolf",    "LibreWolf — Sharing Indicator",  0,         1,	  -1, -1 },
 	{ "imv",        "shotpreview-",                 0,         0,       -1 , -1 },
 	{ "foot",       "ocr-shotpreview-",             0,         1,       -1 , -1 },
 	{ "floatermid", "",                             0,         1,       -1 , -1 },
@@ -113,7 +114,7 @@ static const char *termcmd[]  = { "footie",   NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 static const char *quickcmd[] = { "quickact", NULL };
 static const char *fmsummon[] = { "footie", "-e", "lfrun", "/", NULL };
-static const char *firesummon[]  = { "firefox", NULL };
+static const char *firesummon[]  = { "librewolf", NULL };
 static const char *passsummon[]  = { "passmenu", NULL };
 
 /* other commands are directly defined in the keys */

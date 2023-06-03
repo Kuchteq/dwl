@@ -181,7 +181,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT|WLR_MODIFIER_CTRL, XKB_KEY_S,    spawn,    SHCMD("kill -45 $(pidof someblocks)") },
 	{ MODKEY,         XKB_KEY_b,    spawn,    {.v = (const char*[]) {"somebar", "-c", "toggle", "selected", NULL } }},
 	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,         XKB_KEY_space,      spawn,       SHCMD("kill -45 $(pidof someblocks)")},
-	{ 0,         XKB_KEY_XF86TouchpadOn,      spawn,       {.v = passsummon }},
+	{ MODKEY|WLR_MODIFIER_SHIFT,         XKB_KEY_P,      spawn,       {.v = passsummon }},
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
 	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),

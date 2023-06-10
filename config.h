@@ -39,8 +39,9 @@ static const MonitorRule monrules[] = {
 	*/
 	/* defaults */
 	{ "eDP-1",      0.50, 1,      1   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
-	{ "HDMI-A-1",   0.55, 1,      0.60,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
-	{ "DP-1",       0.55, 1,      0.60,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
+	{ "DP-2",      0.50, 1,      1   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
+	{ "HDMI-A-1",   0.55, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
+	{ "DP-1",       0.55, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
 };
 
 /* keyboard */

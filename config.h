@@ -114,8 +114,9 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 static const char *termcmd[]  = { "footie",   NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
 static const char *quickcmd[] = { "quickact", NULL };
-static const char *fmsummon[] = { "footie", "-e", "lfrun", "/", NULL };
+//static const char *fmsummon[] = { "footie", "zsh", "-c", "'lfrun", "/", ";", "exec", "zsh'", NULL };
 static const char *firesummon[]  = { "librewolf", NULL };
+static const char *chromesummon[]  = { "chromium", NULL };
 static const char *passsummon[]  = { "passmenu", NULL };
 
 /* other commands are directly defined in the keys */
@@ -130,7 +131,8 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
 	{ MODKEY,                    XKB_KEY_q,     	 spawn,          {.v = quickcmd} },
 	{ MODKEY,                    XKB_KEY_w,          spawn,          {.v = firesummon } },
-	{ MODKEY,                    XKB_KEY_o,          spawn,          {.v = fmsummon } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_W,          spawn,          {.v = chromesummon } },
+	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -c 'lfrun;exec zsh'") },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },

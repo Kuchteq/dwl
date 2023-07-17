@@ -207,7 +207,6 @@ typedef struct {
 	const char *id;
 	const char *title;
 	uint32_t tags;
-	int iscentered;
 	int isfloating;
 	int monitor;
 } Rule;
@@ -464,7 +463,6 @@ applyrules(Client *c)
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
 				&& (!r->id || strstr(appid, r->id))) {
-			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
 			newtags |= r->tags;
 			i = 0;
@@ -474,9 +472,13 @@ applyrules(Client *c)
 		}
 	}
 
-	if (c->iscentered) {
+	if (c->isfloating == 2) {
 		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
 		c->geom.y = 0;
+	}
+	else if (c->isfloating == 3) {
+		c->geom.x = (mon->w.width - c->geom.width) + mon->m.x;
+		c->geom.y = mon->w.y;
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);

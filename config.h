@@ -12,15 +12,18 @@ static const float fullscreen_bg[]  = {0.1, 0.1, 0.1, 1.0};
 /* tagging */
 static const int tagcount = 9;
 
+// floatpos 1 means regular left, 2 means middle and 3 means right below the status bar
 static const Rule rules[] = {
-	/* app_id     title                            tags mask  isfloatingTop   monitor */
-	{ "firefox",    "Firefox — Sharing Indicator",  0,         1,	  -1, -1 },
-	{ "LibreWolf",    "LibreWolf — Sharing Indicator",  0,         1,	  -1, -1 },
-	{ "imv",        "shotpreview-",                 0,         0,       -1 , -1 },
-	{ "foot",       "ocr-shotpreview-",             0,         1,       -1 , -1 },
-	{ "floatermid", "",                             0,         1,       -1 , -1 },
+	/* app_id     title                            tags_mask  floatpos   monitor */
+	{ "firefox",    "Firefox — Sharing Indicator",    0,         2,	    -1 },
+	{ "LibreWolf",  "LibreWolf — Sharing Indicator",  0,         2,	    -1 },
+	{ "imv",        "shotpreview-",                   0,         1,       -1 },
+	{ "foot",       "ocr-shotpreview-",               0,         2,       -1 },
+	{ "floatermid", "",                               0,         2,       -1 },
+	{ "floateright","",                               0,         3,       -1 },
 	/*{ "firefox",  NULL,       1 << 8,       0,           -1 },*/
 };
+
 
 /* layout(s) */
 static const Layout layouts[] = {
@@ -53,7 +56,7 @@ static const struct xkb_rule_names xkb_rules = {
 	*/
   .layout = "plde, pl",
   .model = "pc104",
-	.options = "grp:alt_shift_toggle"
+  .options = "grp:alt_shift_toggle"
 };
 static const int repeat_rate = 30;
 static const int repeat_delay = 190;
@@ -160,22 +163,23 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_UP} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_DOWN} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_UP} },
-	{0,                    XKB_KEY_XF86Mail,       spawn,         SHCMD("footie sh -c 'mailsync & ESCDELAY=0 neomutt'") },
-	{0,       XKB_KEY_XF86MonBrightnessUp, spawn,   SHCMD("brightnessctl set 5%+") },
-	{0,       XKB_KEY_XF86MonBrightnessDown, spawn, SHCMD("brightnessctl set 5%-")},
-	{0,       XKB_KEY_XF86AudioRaiseVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof someblocks)")},
-	{0,       XKB_KEY_XF86AudioLowerVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof someblocks)")},
- 	{0,       XKB_KEY_XF86AudioMute,        spawn,   SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)")}, 
-	{0,       XKB_KEY_Print,      spawn,                 {.v = (const char*[]){ "screenshott", NULL } } },
-	{0,       XKB_KEY_XF86Launch9,      spawn,                 {.v = (const char*[]){ "screenrecord", NULL } } },
-	{WLR_MODIFIER_CTRL,       XKB_KEY_F12,      spawn,                 {.v = (const char*[]){ "screensend", NULL } } },
-	{MODKEY,       XKB_KEY_Print,      spawn,               {.v = (const char*[]){ "showshot", NULL } } },
-	{MODKEY|WLR_MODIFIER_CTRL,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-c", NULL } } },
-	{MODKEY|WLR_MODIFIER_SHIFT,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-d", NULL } } },
-	{WLR_MODIFIER_SHIFT,    XKB_KEY_Print,      spawn,      {.v = (const char*[]){ "screensave", NULL } } },
-	{MODKEY,    XKB_KEY_F12,      spawn,                 {.v = (const char*[]) {"dswitch", NULL } } },
-	{MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_B,      spawn,      {.v = (const char*[]){ "bookmarkselect", NULL } } },
-	{MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_T,      spawn,      {.v = (const char*[]){ "themeset", "-o", NULL } } },
+	{ 0,                    XKB_KEY_XF86Mail,       spawn,         SHCMD("footie sh -c 'mailsync & ESCDELAY=0 neomutt'") },
+	{ 0,       XKB_KEY_XF86MonBrightnessUp, spawn,   SHCMD("brightnessctl set 5%+") },
+	{ 0,       XKB_KEY_XF86MonBrightnessDown, spawn, SHCMD("brightnessctl set 5%-")},
+	{ 0,       XKB_KEY_XF86AudioRaiseVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof someblocks)")},
+	{ 0,       XKB_KEY_XF86AudioLowerVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof someblocks)")},
+ 	{ 0,       XKB_KEY_XF86AudioMute,        spawn,   SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)")}, 
+	{ 0,       XKB_KEY_Print,      spawn,                 {.v = (const char*[]){ "screenshott", NULL } } },
+	{ 0,       XKB_KEY_XF86Launch9,      spawn,                 {.v = (const char*[]){ "screenrecord", NULL } } },
+	{ WLR_MODIFIER_CTRL,       XKB_KEY_F12,      spawn,                 {.v = (const char*[]){ "screensend", NULL } } },
+	{ MODKEY,       XKB_KEY_Print,      spawn,               {.v = (const char*[]){ "showshot", NULL } } },
+	{ MODKEY|WLR_MODIFIER_CTRL,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-c", NULL } } },
+	{ MODKEY|WLR_MODIFIER_SHIFT,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-d", NULL } } },
+	{ WLR_MODIFIER_SHIFT,    XKB_KEY_Print,      spawn,      {.v = (const char*[]){ "screensave", NULL } } },
+	{ MODKEY,    XKB_KEY_F12,      spawn,                 {.v = (const char*[]) {"dswitch", NULL } } },
+	{ MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_B,      spawn,      {.v = (const char*[]){ "bookmarkselect", NULL } } },
+	{ MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_T,      spawn,      {.v = (const char*[]){ "themeset", "-o", NULL } } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_L,     	 spawn,          {.v = (const char*[]){ "quicktrans", NULL } } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          spawn,           SHCMD("killall someblocks") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_S,          spawn,           {.v = (const char*[]) {"sus", NULL } } },
@@ -206,5 +210,6 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
+	{ MODKEY, BTN_SIDE,  spawn,     {.v = (const char*[]){ "quicktrans", "-c", NULL } } },
 };
 

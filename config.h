@@ -135,7 +135,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_q,     	 spawn,          {.v = quickcmd} },
 	{ MODKEY,                    XKB_KEY_w,          spawn,          {.v = firesummon } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_W,          spawn,          {.v = chromesummon } },
-	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -c 'lfrun;exec zsh'") },
+	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -ci 'lfrun; exec zsh'") },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },

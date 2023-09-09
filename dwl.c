@@ -2170,7 +2170,7 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		arrange(oldmon);
 	if (m) {
 		/* Make sure window actually overlaps with the monitor */
-		resize(c, c->geom, 0);
+		resize(c, c->geom, 0, 1);
 		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);

@@ -135,7 +135,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_q,     	 spawn,          {.v = quickcmd} },
 	{ MODKEY,                    XKB_KEY_w,          spawn,          {.v = firesummon } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_W,          spawn,          {.v = chromesummon } },
-	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -ci 'lfrun; exec zsh'") },
+	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -ci 'lfcd; exec zsh'") },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
@@ -170,12 +170,12 @@ static const Key keys[] = {
 	{ 0,       XKB_KEY_XF86AudioLowerVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof someblocks)")},
  	{ 0,       XKB_KEY_XF86AudioMute,        spawn,   SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)")}, 
 	{ 0,       XKB_KEY_Print,      spawn,                 {.v = (const char*[]){ "screenshott", NULL } } },
-	{ 0,       XKB_KEY_XF86Launch9,      spawn,                 {.v = (const char*[]){ "screenrecord", NULL } } },
+	{ 0,       XKB_KEY_XF86Launch9,      spawn,                 {.v = (const char*[]){ "screenrecord", NULL } } }, // fn+print_screen if present on keyboard
 	{ WLR_MODIFIER_CTRL,       XKB_KEY_F12,      spawn,                 {.v = (const char*[]){ "screensend", NULL } } },
 	{ MODKEY,       XKB_KEY_Print,      spawn,               {.v = (const char*[]){ "showshot", NULL } } },
-	{ MODKEY|WLR_MODIFIER_CTRL,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-c", NULL } } },
-	{ MODKEY|WLR_MODIFIER_SHIFT,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-d", NULL } } },
-	{ WLR_MODIFIER_SHIFT,    XKB_KEY_Print,      spawn,      {.v = (const char*[]){ "screensave", NULL } } },
+	{ MODKEY|WLR_MODIFIER_CTRL,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-c", NULL } } }, // show chars in print screen
+	{ MODKEY|WLR_MODIFIER_SHIFT,   XKB_KEY_Print,  spawn,        {.v = (const char*[]){ "showshot", "-d", NULL } } }, // show screenshot directory
+	{ WLR_MODIFIER_SHIFT,    XKB_KEY_Print,      spawn,      {.v = (const char*[]){ "screensave", NULL } } }, // save screenshow
 	{ MODKEY,    XKB_KEY_F12,      spawn,                 {.v = (const char*[]) {"dswitch", NULL } } },
 	{ MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_B,      spawn,      {.v = (const char*[]){ "bookmarkselect", NULL } } },
 	{ MODKEY|WLR_MODIFIER_SHIFT,    XKB_KEY_T,      spawn,      {.v = (const char*[]){ "themeset", "-o", NULL } } },

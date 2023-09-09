@@ -186,7 +186,7 @@ static const Key keys[] = {
 	  /*Z as in keyboardzzz or zaza also very easily pressable so that you can connect to the keyboard quickly */
 	{ MODKEY,         XKB_KEY_z,          spawn,           SHCMD("keyboard-connect") },
 	{ MODKEY|WLR_MODIFIER_SHIFT|WLR_MODIFIER_CTRL, XKB_KEY_S,    spawn,    SHCMD("kill -45 $(pidof someblocks)") },
-	{ MODKEY,         XKB_KEY_b,    spawn,    {.v = (const char*[]) {"somebar", "-c", "toggle", "selected", NULL } }},
+	{ MODKEY,         XKB_KEY_b,    spawn,    {.v = (const char*[]) {"dwlb", "-toggle-visibility", "selected", NULL } }},
 	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,         XKB_KEY_space,      spawn,       SHCMD("kill -45 $(pidof someblocks)")},
 	{ MODKEY|WLR_MODIFIER_SHIFT,         XKB_KEY_P,      spawn,       {.v = passsummon }},
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),

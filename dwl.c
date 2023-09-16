@@ -474,7 +474,7 @@ applyrules(Client *c)
 
 	if (c->isfloating == 2) {
 		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
-		c->geom.y = 0;
+		c->geom.y = mon->w.y;
 	}
 	else if (c->isfloating == 3) {
 		c->geom.x = (mon->w.width - c->geom.width) + mon->m.x;

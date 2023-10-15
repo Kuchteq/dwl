@@ -20,6 +20,8 @@ static const Rule rules[] = {
 	{ "imv",        "shotpreview-",                   0,         1,       -1 },
 	{ "foot",       "ocr-shotpreview-",               0,         2,       -1 },
 	{ "floatermid", "",                               0,         2,       -1 },
+	{ "imv",        "qrshare",                        0,         2,       -1 }, // Imv can't disguise as other app but can switch its window name
+	{ "imv",        "shotpreview-",                   0,         3,       -1 },
 	{ "floateright","",                               0,         3,       -1 },
 	/*{ "firefox",  NULL,       1 << 8,       0,           -1 },*/
 };

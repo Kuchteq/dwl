@@ -30,14 +30,28 @@ One that integrates nicely with [wayrice]: https://github.com/Kuchteq/wayrice
 
 ## Building dwl
 
-dwl has only two dependencies: `wlroots` and `wayland-protocols`. 
+dwl has the following dependencies:
+```
+libinput
+wayland
+wlroots (compiled with the libinput backend)
+xkbcommon
+wayland-protocols (compile-time only)
+pkg-config (compile-time only)
+```
+If you enable X11 support:
+```
+libxcb
+libxcb-wm
+wlroots (compiled with X11 support)
+Xwayland (runtime only)
+```
 
 Simply install these (and their `-devel` versions if your distro has separate
 development packages) and run `make`.  If you wish to build against a Git
 version of wlroots, check out the [wlroots-next branch].
 
-To enable XWayland, you should also install xorg-xwayland and uncomment its flag
-in `config.mk`.
+To enable XWayland, you should uncomment its flags in `config.mk`.
 
 ## Configuration
 
@@ -63,6 +77,7 @@ When dwl is run with no arguments, it will launch the server and begin handling
 any shortcuts configured in `config.h`. There is no status bar or other
 decoration initially; these are instead clients that can be run within
 the Wayland session.
+Do note that the background color is black.
 
 If you would like to run a script or command automatically at startup, you can
 specify the command using the `-s` option. This command will be executed as a
@@ -86,7 +101,7 @@ automatically, you will need to configure it prior to launching `dwl`, e.g.:
 
 ### Status information
 
-Information about selected layouts, current window title, and
+Information about selected layouts, current window title, app-id, and
 selected/occupied/urgent tags is written to the stdin of the `-s` command (see
 the `printstatus()` function for details).  This information can be used to
 populate an external status bar with a script that parses the information.

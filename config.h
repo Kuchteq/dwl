@@ -1,16 +1,23 @@
+#define COLOR(hex)    { ((hex >> 24) & 0xFF) / 255.0f, \
+                        ((hex >> 16) & 0xFF) / 255.0f, \
+                        ((hex >> 8) & 0xFF) / 255.0f, \
+                        (hex & 0xFF) / 255.0f }
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
 static const bool cursor_warp = true;
 static const int smartborders              = 1;
 static const unsigned int borderpx         = 2;  /* border pixel of windows */
-static const float bordercolor[]    = {0.5, 0.5, 0.5, 1.0};
-static const float focuscolor[]     = {0.737, 0.31, 0.56, 1.0};
+static const float bordercolor[]           = COLOR(0x7f7f7fff);
+static const float focuscolor[]            = COLOR(0xbb4f8eff);
+static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]  = {0.1, 0.1, 0.1, 1.0};
 
-/* tagging */
-static const int tagcount = 9;
+/* tagging - TAGCOUNT must be no greater than 31 */
+#define TAGCOUNT (9)
+
+static int log_level = WLR_ERROR;
 
 // floatpos 1 means regular left, 2 means middle and 3 means right below the status bar
 static const Rule rules[] = {

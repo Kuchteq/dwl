@@ -1466,6 +1466,14 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	for (k = keys; k < END(keys); k++) {
 		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
 				sym == k->keysym && k->func) {
+                        // If it is the first keybinding, aka the one that spawns the terminal, let that stuff pass to the client
+                        if (k == keys) {
+                                Client *sel;
+                                // Pass the keypress to client
+                                if ((sel = focustop(selmon)) && !strcmp(client_get_appid(sel), "footclient")) {
+                                    return 0;
+                                }
+                        }
 			k->func(&k->arg);
 			handled = 1;
 		}

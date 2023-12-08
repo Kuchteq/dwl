@@ -85,7 +85,7 @@ shell command using `/bin/sh -c`.  It serves a similar function to `.xinitrc`,
 but differs in that the display server will not shut down when this process
 terminates. Instead, dwl will send this process a SIGTERM at shutdown and wait
 for it to terminate (if it hasn't already). This makes it ideal for execing into
-a user service manager like [s6], [anopa], [runit], or [`systemd --user`].
+a user service manager like [s6], [anopa], [runit], [dinit], or [`systemd --user`].
 
 Note: The `-s` command is run as a *child process* of dwl, which means that it
 does not have the ability to affect the environment of dwl or of any processes
@@ -142,12 +142,13 @@ inspiration, and to the various contributors to the project, including:
 [#dwl on Libera Chat]: https://web.libera.chat/?channels=#dwl
 [Wayland]: https://wayland.freedesktop.org/
 [wlroots]: https://gitlab.freedesktop.org/wlroots/wlroots/
-[wlroots-next branch]: https://github.com/djpohly/dwl/tree/wlroots-next
-[patches page on our wiki]: https://github.com/djpohly/dwl/wiki/Patches
+[wlroots-next branch]: https://codeberg.org/dwl/dwl/src/branch/wlroots-next
+[patches page on our wiki]: https://codeberg.org/dwl/dwl/wiki/Patches
 [s6]: https://skarnet.org/software/s6/
 [anopa]: https://jjacky.com/anopa/
 [runit]: http://smarden.org/runit/faq.html#userservices
+[dinit]: https://davmac.org/projects/dinit/
 [`systemd --user`]: https://wiki.archlinux.org/title/Systemd/User
-[wiki]: https://github.com/djpohly/dwl/wiki#compatible-status-bars
+[wiki]: https://codeberg.org/dwl/dwl/wiki/Home#compatible-status-bars
 [list of useful resources on our wiki]:
-    https://github.com/djpohly/dwl/wiki#migrating-from-x
+    https://codeberg.org/dwl/dwl/wiki/Home#migrating-from-x

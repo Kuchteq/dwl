@@ -122,11 +122,14 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
+/* Users with lower end specs might want to use footie instead of foot. This is a wrapper script
+ * that activates foot's client - server capabilities reducing resource consumption with multiple 
+ * terminals and startup overhead. For now though this has some minor issues with dynamic theming. */
+#define TERMINAL "foot"
 /* commands */
-static const char *termcmd[]  = { "footie",   NULL };
+static const char *termcmd[]  = { TERMINAL,   NULL };
 static const char *menucmd[] = { "launcher", NULL };
 static const char *quickcmd[] = { "quickact", NULL };
-//static const char *fmsummon[] = { "footie", "zsh", "-c", "'lfrun", "/", ";", "exec", "zsh'", NULL };
 static const char *firesummon[]  = { "librewolf", NULL };
 static const char *chromesummon[]  = { "chromium", NULL };
 static const char *passsummon[]  = { "passmenu", NULL };
@@ -144,8 +147,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_q,     	 spawn,          {.v = quickcmd} },
 	{ MODKEY,                    XKB_KEY_w,          spawn,          {.v = firesummon } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_W,          spawn,          {.v = chromesummon } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_M,          spawn,          {.v = (const char*[]){ "footie", "muzyka", NULL } }},
-	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD("footie zsh -ci 'lfcd; exec zsh'") },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_M,          spawn,          {.v = (const char*[]){ TERMINAL, "muzyka", NULL } }},
+	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD(TERMINAL " zsh -ci 'lfcd; exec zsh'") },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
@@ -173,7 +176,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_UP} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_DOWN} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_UP} },
-	{ 0,                    XKB_KEY_XF86Mail,       spawn,         SHCMD("footie sh -c 'mailsync & ESCDELAY=0 neomutt'") },
+	{ 0,                    XKB_KEY_XF86Mail,       spawn,         SHCMD(TERMINAL " sh -c 'mailsync & ESCDELAY=0 neomutt'") },
 	{ 0,       XKB_KEY_XF86MonBrightnessUp, spawn,   SHCMD("brightnessctl set 5%+") },
 	{ 0,       XKB_KEY_XF86MonBrightnessDown, spawn, SHCMD("brightnessctl set 5%-")},
 	{ 0,       XKB_KEY_XF86AudioRaiseVolume, spawn,   SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof someblocks)")},

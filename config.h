@@ -128,6 +128,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define TERMINAL "foot"
 /* commands */
 static const char *termcmd[]  = { TERMINAL,   NULL };
+static const char *fmsummon[] = { TERMINAL, "lf", "--command", "on-quit-prepare", NULL };
 static const char *menucmd[] = { "launcher", NULL };
 static const char *quickcmd[] = { "quickact", NULL };
 static const char *firesummon[]  = { "librewolf", NULL };
@@ -148,7 +149,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_w,          spawn,          {.v = firesummon } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_W,          spawn,          {.v = chromesummon } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_M,          spawn,          {.v = (const char*[]){ TERMINAL, "muzyka", NULL } }},
-	{ MODKEY,                    XKB_KEY_o,          spawn,          SHCMD(TERMINAL " zsh -ci 'lfcd; exec zsh'") },
+	{ MODKEY,                    XKB_KEY_o,          spawn,          {.v = fmsummon } },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },

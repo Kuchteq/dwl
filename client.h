@@ -10,7 +10,7 @@ static inline int
 client_is_x11(Client *c)
 {
 #ifdef XWAYLAND
-	return c->type == X11Managed || c->type == X11Unmanaged;
+	return c->type == X11;
 #endif
 	return 0;
 }
@@ -270,7 +270,8 @@ static inline int
 client_is_unmanaged(Client *c)
 {
 #ifdef XWAYLAND
-	return c->type == X11Unmanaged;
+	if (client_is_x11(c))
+		return c->surface.xwayland->override_redirect;
 #endif
 	return 0;
 }
@@ -351,7 +352,7 @@ client_set_tiled(Client *c, uint32_t edges)
 	if (client_is_x11(c))
 		return;
 #endif
-	if (wl_resource_get_version(c->surface.xdg->resource)
+	if (wl_resource_get_version(c->surface.xdg->toplevel->resource)
 			>= XDG_TOPLEVEL_STATE_TILED_RIGHT_SINCE_VERSION) {
 		wlr_xdg_toplevel_set_tiled(c->surface.xdg->toplevel, edges);
 	} else {

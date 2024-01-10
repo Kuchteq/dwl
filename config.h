@@ -9,6 +9,7 @@ static const bool cursor_warp = true;
 static const int smartborders              = 1;
 static const unsigned int borderpx         = 2;  /* border pixel of windows */
 static const float bordercolor[]           = COLOR(0x7f7f7fff);
+static const float rootcolor[]             = COLOR(0x000000ff);
 static const float focuscolor[]            = COLOR(0xbb4f8eff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
@@ -65,7 +66,7 @@ static const struct xkb_rule_names xkb_rules = {
 	*/
   .layout = "plde, pl",
   .model = "pc104",
-  .options = "grp:alt_shift_toggle"
+  .options = "grp:alt_space_toggle"
 };
 static const int repeat_rate = 30;
 static const int repeat_delay = 190;

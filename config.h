@@ -13,7 +13,7 @@ static const float rootcolor[]             = COLOR(0x000000ff);
 static const float focuscolor[]            = COLOR(0xbb4f8eff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]  = {0.1, 0.1, 0.1, 1.0};
+static const float fullscreen_bg[]  = {0.1f, 0.1f, 0.1f, 1.0f};
 
 /* tagging - TAGCOUNT must be no greater than 31 */
 #define TAGCOUNT (9)
@@ -51,10 +51,10 @@ static const MonitorRule monrules[] = {
 	{ "eDP-1",    0.5,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL },
 	*/
 	/* defaults */
-	{ "eDP-1",      0.50, 1,      1.5   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
-	{ "DP-2",      0.50, 1,      1   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
-	{ "HDMI-A-1",   0.55, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
-	{ "DP-1",       0.55, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
+	{ "eDP-1",      0.50f, 1,      1   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
+	{ "DP-2",      0.50f, 1,      1   ,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  0,  0},
+	{ "HDMI-A-1",   0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
+	{ "DP-1",       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   0,  0},
 };
 
 /* keyboard */
@@ -155,8 +155,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
-	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
-	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
+	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },

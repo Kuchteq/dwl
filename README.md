@@ -5,12 +5,11 @@ Or on our [Discord server].
 
 dwl is a compact, hackable compositor for [Wayland] based on [wlroots]. It is
 intended to fill the same space in the Wayland world that dwm does in X11,
-primarily in terms of philosophy, and secondarily in terms of functionality.
+primarily in terms of functionality, and secondarily in terms of philosophy.
 Like dwm, dwl is:
 
 - Easy to understand, hack on, and extend with patches
 - One C source file (or a very small number) configurable via `config.h`
-- Limited to 2200 SLOC to promote hackability
 - Tied to as few external dependencies as possible
 
 [Read full info on]: https://github.com/djpohly/dwl
@@ -132,8 +131,8 @@ possible.
 Many thanks to suckless.org and the dwm developers and community for the
 inspiration, and to the various contributors to the project, including:
 
+- **Devin J. Pohly for creating and nurturing the fledgling project**
 - Alexander Courtis for the XWayland implementation
-- Devin J. Pohly for creating and nurturing the fledgling project
 - Guido Cella for the layer-shell protocol implementation, patch maintenance,
   and for helping to keep the project running
 - Stivvo for output management and fullscreen support, and patch maintenance

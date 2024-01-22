@@ -64,9 +64,9 @@ static const struct xkb_rule_names xkb_rules = {
 	.options = "ctrl:nocaps",
 
 	*/
-  .layout = "plde, pl",
+  .layout = "plde",
   .model = "pc104",
-  .options = "grp:alt_space_toggle"
+  .options = ""
 };
 static const int repeat_rate = 30;
 static const int repeat_delay = 190;
@@ -174,6 +174,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
   /* Replaced LEFT and RIGHT with UP and DOWN for moving to the other screen when display is above*/
+	{ MODKEY,                    XKB_KEY_apostrophe, monaxis,       {0} },
 	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_DOWN} },
 	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_UP} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_DOWN} },

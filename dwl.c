@@ -47,6 +47,7 @@
 #include <wlr/types/wlr_subcompositor.h>
 #include <wlr/types/wlr_viewporter.h>
 #include <wlr/types/wlr_virtual_keyboard_v1.h>
+#include <wlr/types/wlr_virtual_pointer_v1.h>
 #include <wlr/types/wlr_xcursor_manager.h>
 #include <wlr/types/wlr_xdg_activation_v1.h>
 #include <wlr/types/wlr_xdg_decoration_v1.h>
@@ -357,6 +358,7 @@ static void urgent(struct wl_listener *listener, void *data);
 static void view(const Arg *arg);
 static void virtualkeyboard(struct wl_listener *listener, void *data);
 static void warpcursor(const Client *c);
+static void virtualpointer(struct wl_listener *listener, void *data);
 static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		     Client **pc, LayerSurface **pl, double *nx, double *ny);
@@ -390,6 +392,7 @@ static struct wlr_layer_shell_v1 *layer_shell;
 static struct wlr_output_manager_v1 *output_mgr;
 static struct wlr_gamma_control_manager_v1 *gamma_control_mgr;
 static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
+static struct wlr_virtual_pointer_manager_v1 *virtual_pointer_mgr;
 static struct wlr_cursor_shape_manager_v1 *cursor_shape_mgr;
 
 static struct wlr_cursor *cursor;
@@ -505,8 +508,11 @@ void applyrules(Client *c)
 void arrange(Monitor *m)
 {
 	Client *c;
-	wl_list_for_each(c, &clients, link)
-	{
+
+	if (!m->wlr_output->enabled)
+		return;
+
+	wl_list_for_each(c, &clients, link) {
 		if (c->mon == m) {
 			wlr_scene_node_set_enabled(&c->scene->node,
 						   VISIBLEON(c, m));
@@ -2009,14 +2015,10 @@ void printstatus(void)
 		if ((c = focustop(m))) {
 			title = client_get_title(c);
 			appid = client_get_appid(c);
-			printf("%s title %s\n", m->wlr_output->name,
-			       title ? title : broken);
-			printf("%s appid %s\n", m->wlr_output->name,
-			       appid ? appid : broken);
-			printf("%s fullscreen %u\n", m->wlr_output->name,
-			       c->isfullscreen);
-			printf("%s floating %u\n", m->wlr_output->name,
-			       c->isfloating);
+			printf("%s title %s\n", m->wlr_output->name, title ? title : broken);
+			printf("%s appid %s\n", m->wlr_output->name, appid ? appid : broken);
+			printf("%s fullscreen %d\n", m->wlr_output->name, c->isfullscreen);
+			printf("%s floating %d\n", m->wlr_output->name, c->isfloating);
 			sel = c->tags;
 		} else {
 			printf("%s title \n", m->wlr_output->name);
@@ -2027,8 +2029,8 @@ void printstatus(void)
 		}
 
 		printf("%s selmon %u\n", m->wlr_output->name, m == selmon);
-		printf("%s tags %u %u %u %u\n", m->wlr_output->name, occ,
-		       m->tagset[m->seltags], sel, urg);
+		printf("%s tags %"PRIu32" %"PRIu32" %"PRIu32" %"PRIu32"\n",
+			m->wlr_output->name, occ, m->tagset[m->seltags], sel, urg);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
 	}
 	fflush(stdout);
@@ -2542,8 +2544,10 @@ void setup(void)
 	 */
 	LISTEN_STATIC(&backend->events.new_input, inputdevice);
 	virtual_keyboard_mgr = wlr_virtual_keyboard_manager_v1_create(dpy);
-	LISTEN_STATIC(&virtual_keyboard_mgr->events.new_virtual_keyboard,
-		      virtualkeyboard);
+	LISTEN_STATIC(&virtual_keyboard_mgr->events.new_virtual_keyboard, virtualkeyboard);
+	virtual_pointer_mgr = wlr_virtual_pointer_manager_v1_create(dpy);
+	LISTEN_STATIC(&virtual_pointer_mgr->events.new_virtual_pointer, virtualpointer);
+
 	seat = wlr_seat_create(dpy, "seat0");
 	LISTEN_STATIC(&seat->events.request_set_cursor, setcursor);
 	LISTEN_STATIC(&seat->events.request_set_selection, setsel);
@@ -3040,7 +3044,18 @@ void warpcursor(const Client *c)
 					c->geom.y + c->geom.height / 2.0);
 }
 
-Monitor *xytomon(double x, double y)
+void virtualpointer(struct wl_listener *listener, void *data)
+{
+	struct wlr_virtual_pointer_v1_new_pointer_event *event = data;
+	struct wlr_pointer pointer = event->new_pointer->pointer;
+
+	wlr_cursor_attach_input_device(cursor, &pointer.base);
+	if (event->suggested_output)
+		wlr_cursor_map_input_to_output(cursor, &pointer.base, event->suggested_output);
+}
+
+Monitor *
+xytomon(double x, double y)
 {
 	struct wlr_output *o = wlr_output_layout_output_at(output_layout, x, y);
 	return o ? o->data : NULL;
@@ -3137,8 +3152,12 @@ void configurex11(struct wl_listener *listener, void *data)
 {
 	Client *c = wl_container_of(listener, c, configure);
 	struct wlr_xwayland_surface_configure_event *event = data;
-	if (!c->mon)
+	/* TODO: figure out if there is another way to do this */
+	if (!c->mon) {
+		wlr_xwayland_surface_configure(c->surface.xwayland,
+				event->x, event->y, event->width, event->height);
 		return;
+	}
 	if (c->isfloating || client_is_unmanaged(c))
 		resize(c,
 		       (struct wlr_box){ .x = event->x,

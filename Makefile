@@ -64,3 +64,5 @@ uninstall:
 .SUFFIXES: .c .o
 .c.o:
 	$(CC) $(CPPFLAGS) $(DWLCFLAGS) -c $<
+pkgbuild:
+	makepkg -sif

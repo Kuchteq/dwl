@@ -1,0 +1,20 @@
+diff --git a/dwl.c b/dwl.c
+index fa76db2..6e85641 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -453,6 +453,15 @@ applyrules(Client *c)
+ 			}
+ 		}
+ 	}
++
++	if (c->isfloating == 2) {
++		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
++		c->geom.y = mon->w.y;
++	} else if (c->isfloating == 3) {
++		c->geom.x = (mon->w.width - c->geom.width) + mon->m.x;
++		c->geom.y = mon->w.y;
++	}
++
+ 	setmon(c, mon, newtags);
+ }
+ 

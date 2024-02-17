@@ -450,8 +450,8 @@ struct Pertag {
 void applybounds(Client *c, struct wlr_box *bbox)
 {
 	/* set minimum possible */
-	c->geom.width = MAX(1, c->geom.width);
-	c->geom.height = MAX(1, c->geom.height);
+	c->geom.width = MAX(1 + 2 * (int)c->bw, c->geom.width);
+	c->geom.height = MAX(1 + 2 * (int)c->bw, c->geom.height);
 
 	if (c->geom.x >= bbox->x + bbox->width)
 		c->geom.x = bbox->x + bbox->width - c->geom.width;
@@ -958,9 +958,9 @@ void createmon(struct wl_listener *listener, void *data)
 			m->m.y = r->y;
 			m->mfact = r->mfact;
 			m->nmaster = r->nmaster;
-			m->lt[0] = m->lt[1] = r->lt;
-			strncpy(m->ltsymbol, m->lt[m->sellt]->symbol,
-				LENGTH(m->ltsymbol));
+			m->lt[0] = r->lt;
+			m->lt[1] = &layouts[LENGTH(layouts) > 1 && r->lt != &layouts[1]];
+			strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol));
 			wlr_output_state_set_scale(&state, r->scale);
 			wlr_output_state_set_transform(&state, r->rr);
 			break;

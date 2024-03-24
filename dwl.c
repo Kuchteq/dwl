@@ -1587,7 +1587,7 @@ int keybinding(uint32_t mods, xkb_keysym_t sym)
 				Client *sel;
 				// Pass the keypress to client
 				if ((sel = focustop(selmon)) &&
-				    !strcmp(client_get_appid(sel), TERMINAL)) {
+				    client_get_appid(sel) != NULL && !strcmp(client_get_appid(sel), TERMINAL)) {
 					return 0;
 				}
 			}

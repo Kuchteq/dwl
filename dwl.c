@@ -86,17 +86,7 @@
 /* enums */
 enum { CurNormal, CurPressed, CurMove, CurResize }; /* cursor */
 enum { XDGShell, LayerShell, X11 }; /* client types */
-enum {
-	LyrBg,
-	LyrBottom,
-	LyrTile,
-	LyrFloat,
-	LyrFS,
-	LyrTop,
-	LyrOverlay,
-	LyrBlock,
-	NUM_LAYERS
-}; /* scene layers */
+enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock, NUM_LAYERS }; /* scene layers */
 #ifdef XWAYLAND
 enum {
 	NetWMWindowTypeDialog,
@@ -3261,12 +3251,8 @@ void configurex11(struct wl_listener *listener, void *data)
 		return;
 	}
 	if (c->isfloating || client_is_unmanaged(c))
-		resize(c,
-		       (struct wlr_box){ .x = event->x,
-					 .y = event->y,
-					 .width = event->width,
-					 .height = event->height },
-		       0, 1);
+		resize(c, (struct wlr_box){.x = event->x, .y = event->y,
+				.width = event->width + c->bw * 2, .height = event->height + c->bw * 2}, 0, 0);
 	else
 		arrange(c->mon);
 }

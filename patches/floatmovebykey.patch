@@ -1,0 +1,40 @@
+diff --git a/dwl.c b/dwl.c
+index 8cae70c..ccc50ce 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -288,6 +288,8 @@ static void destroysessionlock(struct wl_listener *listener, void *data);
+ static void destroysessionmgr(struct wl_listener *listener, void *data);
+ static void destroykeyboardgroup(struct wl_listener *listener, void *data);
+ static Monitor *dirtomon(enum wlr_direction dir);
++static void floatvmovebykey(const Arg *arg);
++static void floathmovebykey(const Arg *arg);
+ static void focusclient(Client *c, int lift);
+ static void focusmon(const Arg *arg);
+ static void focusstack(const Arg *arg);
+@@ -1377,6 +1379,26 @@ dirtomon(enum wlr_direction dir)
+ 	return selmon;
+ }
+ 
++void floatvmovebykey(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++	if (!sel || client_is_unmanaged(sel) || sel->isfullscreen)
++		return;
++	setfloating(sel, 1);
++	resize(sel, (struct wlr_box){.x = sel->geom.x + arg->i, .y = sel->geom.y,
++	.width = sel->geom.width, .height = sel->geom.height}, 1);
++}
++
++void floathmovebykey(const Arg *arg)
++{
++	Client *sel = focustop(selmon);
++	if (!sel || client_is_unmanaged(sel) || sel->isfullscreen)
++		return;
++	setfloating(sel, 1);
++	resize(sel, (struct wlr_box){.x = sel->geom.x, .y = sel->geom.y + arg->i,
++	.width = sel->geom.width, .height = sel->geom.height}, 1);
++}
++
+ void
+ focusclient(Client *c, int lift)
+ {

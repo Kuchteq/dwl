@@ -41,7 +41,7 @@ static const Layout layouts[] = {
     {"[]=", tile   },
     {"><>", NULL   }, /* no layout function means floating behavior */
     {"[M]", monocle},
-    {"||",  column },
+    {"||",  col },
 };
 
 /* monitors */
@@ -169,12 +169,10 @@ static const Key keys[] = {
     {MODKEY,                                XKB_KEY_f,                     togglefullscreen, {0}                                            },
     {MODKEY,                                XKB_KEY_0,                     view,             {.ui = ~0}                                     },
     {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_parenright,            tag,              {.ui = ~0}                                     },
- /* Replaced LEFT and RIGHT with UP and DOWN for moving to the other screen when display is above*/
-    {MODKEY,                                XKB_KEY_apostrophe,            monaxis,          {0}                                            },
-    {MODKEY,                                XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_DOWN}                      },
-    {MODKEY,                                XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_UP}                        },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_DOWN}                      },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_UP}                        },
+    {MODKEY,                                XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT}                      },
+    {MODKEY,                                XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT}                        },
+    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT}                      },
+    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT}                        },
 #define MAIL " sh -c 'mailsync & ESCDELAY=0 neomutt'"
     {0,                                     XKB_KEY_XF86Mail,              spawn,            SHCMD(TERMINAL MAIL)                           },
     {0,                                     XKB_KEY_XF86MonBrightnessUp,   spawn,            SHCMD("brightnessctl set 5%+")                 },

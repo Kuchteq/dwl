@@ -1,0 +1,21 @@
+diff --git a/dwl.c b/dwl.c
+index a3d1b29..8cae70c 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -1587,6 +1587,16 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
+ 	for (k = keys; k < END(keys); k++) {
+ 		if (CLEANMASK(mods) == CLEANMASK(k->mod)
+ 				&& sym == k->keysym && k->func) {
++
++			/* If it is the first keybinding, aka the one that spawns 
++                         * the terminal, let the input be passed to the client */
++			if (k == keys) {
++				Client *sel = focustop(selmon);
++				// Pass the keypress to client
++				if ( sel && client_get_appid(sel) != NULL 
++                                    && !strcmp(client_get_appid(sel), TERMINAL)) 
++					return 0;
++			}
+ 			k->func(&k->arg);
+ 			return 1;
+ 		}

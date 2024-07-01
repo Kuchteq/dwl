@@ -5,3 +5,4 @@ patch < patches/pertag.patch
 patch < patches/floatpos.patch
 patch < patches/terminalpass.patch
 patch < patches/floatmovebykey.patch
+patch < patches/togglewarpcursor.patch

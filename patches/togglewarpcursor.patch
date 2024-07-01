@@ -1,0 +1,33 @@
+diff --git a/dwl.c b/dwl.c
+index e7b5cd6..fc00edd 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -348,6 +348,7 @@ static void togglefloating(const Arg *arg);
+ static void togglefullscreen(const Arg *arg);
+ static void toggletag(const Arg *arg);
+ static void toggleview(const Arg *arg);
++static void togglewarpcursor(const Arg *arg);
+ static void unlocksession(struct wl_listener *listener, void *data);
+ static void unmaplayersurfacenotify(struct wl_listener *listener, void *data);
+ static void unmapnotify(struct wl_listener *listener, void *data);
+@@ -2843,6 +2844,11 @@ toggleview(const Arg *arg)
+ 	printstatus();
+ }
+ 
++void
++togglewarpcursor(const Arg *arg)
++{
++        warp_cursor = !warp_cursor;
++}
+ void
+ unlocksession(struct wl_listener *listener, void *data)
+ {
+@@ -3084,7 +3090,7 @@ virtualpointer(struct wl_listener *listener, void *data)
+ 
+ void
+ warpcursor(const Client *c) {
+-	if (cursor_mode != CurNormal) {
++	if (cursor_mode != CurNormal || !warp_cursor) {
+ 		return;
+ 	}
+ 	if (!c && selmon) {

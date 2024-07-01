@@ -6,7 +6,7 @@
 /* appearance */
 static const int          sloppyfocus               = 1; /* focus follows mouse */
 static const int          bypass_surface_visibility = 0; /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const bool         cursor_warp               = true;
+             int          warp_cursor               = 1; /* toggle with alt+ctrl+w (mnemo warp), basically your mouse moves to the center of focus */
 static const int          smartborders              = 1;
 static const unsigned int borderpx                  = 2; /* border pixel of windows */
 static const float        bordercolor[]             = COLOR(0x7f7f7fff);
@@ -32,7 +32,6 @@ static const Rule rules[] = {
     {"imv",         "qrshare",                         0, 2, -1}, // Imv can't disguise as other app but can switch its window name
     {"imv",         "shotpreview-",                    0, 3, -1},
     {"floateright", "",                                0, 3, -1},
- /*{ "firefox",  NULL,       1 << 8,       0,           -1 },*/
 };
 
 /* layout(s) */
@@ -120,6 +119,8 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+/* helper shorthand for spawning processes */
+#define SPAWN(...) {.v = (const char*[]){ __VA_ARGS__, NULL } }
 
 /* Users with lower end specs might want to use footie instead of foot. This is a wrapper script
  * that activates foot's client - server capabilities reducing resource consumption with multiple
@@ -127,88 +128,94 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define TERMINAL "foot"
 /* commands */
 static const char *termcmd[]      = {TERMINAL,    NULL};
-static const char *menucmd[]      = {"launcher",  NULL};
-static const char *quickcmd[]     = {"quickact",  NULL};
-static const char *passsummon[]   = {"passmenu",  NULL};
-static const char *firesummon[]   = {"librewolf", NULL};
-static const char *chromesummon[] = {"chromium",  NULL};
 static const char *fmsummon[]     = {TERMINAL, "lf", "--command", "on-quit-prepare", NULL};
-static const char *musicsummon[]  = {TERMINAL, "supersonic-desktop", NULL};
 
-/* other commands are directly defined in the keys */
-
-static const Key keys[] = {
-  /* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
-  /* modifier                  key                 function        argument */
-    {MODKEY,                                XKB_KEY_space,                 spawn,            {.v = termcmd}                                 },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_Return,                spawn,            {.v = menucmd}                                 },
-    {MODKEY,                                XKB_KEY_q,                     spawn,            {.v = quickcmd}                                },
-    {MODKEY,                                XKB_KEY_w,                     spawn,            {.v = firesummon}                              },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_W,                     spawn,            {.v = chromesummon}                            },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_M,                     spawn,            {.v = musicsummon}                             },
-    {MODKEY,                                XKB_KEY_o,                     spawn,            {.v = fmsummon}                                },
-    {MODKEY,                                XKB_KEY_j,                     focusstack,       {.i = +1}                                      },
-    {MODKEY,                                XKB_KEY_k,                     focusstack,       {.i = -1}                                      },
-    {MODKEY,                                XKB_KEY_i,                     incnmaster,       {.i = +1}                                      },
-    {MODKEY,                                XKB_KEY_d,                     incnmaster,       {.i = -1}                                      },
-    {MODKEY,                                XKB_KEY_h,                     setmfact,         {.f = -0.05f}                                  },
-    {MODKEY,                                XKB_KEY_l,                     setmfact,         {.f = +0.05f}                                  },
-    {MODKEY,                                XKB_KEY_Return,                zoom,             {0}                                            },
-    {MODKEY,                                XKB_KEY_Tab,                   view,             {0}                                            },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_C,                     killclient,       {0}                                            },
-    {MODKEY,                                XKB_KEY_t,                     setlayout,        {.v = &layouts[0]}                             },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_F,                     setlayout,        {.v = &layouts[1]}                             },
-    {MODKEY,                                XKB_KEY_m,                     setlayout,        {.v = &layouts[2]}                             },
-    {MODKEY,                                XKB_KEY_backslash,             setlayout,        {.v = &layouts[3]}                             },
-    {MODKEY,                                XKB_KEY_s,                     setlayout,        {0}                                            },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_space,                 togglefloating,   {0}                                            },
-    {MODKEY,                                XKB_KEY_Up,                    floathmovebykey,  {.i = -80}                                     },
-    {MODKEY,                                XKB_KEY_Down,                  floathmovebykey,  {.i = +80}                                     },
-    {MODKEY,                                XKB_KEY_Left,                  floatvmovebykey,  {.i = -80}                                     },
-    {MODKEY,                                XKB_KEY_Right,                 floatvmovebykey,  {.i = +80}                                     },
-    {MODKEY,                                XKB_KEY_f,                     togglefullscreen, {0}                                            },
-    {MODKEY,                                XKB_KEY_0,                     view,             {.ui = ~0}                                     },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_parenright,            tag,              {.ui = ~0}                                     },
-    {MODKEY,                                XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT}                      },
-    {MODKEY,                                XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT}                        },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT}                      },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT}                        },
+/* shell commands macros to help with keys array readability */
 #define MAIL " sh -c 'mailsync & ESCDELAY=0 neomutt'"
-    {0,                                     XKB_KEY_XF86Mail,              spawn,            SHCMD(TERMINAL MAIL)                           },
-    {0,                                     XKB_KEY_XF86MonBrightnessUp,   spawn,            SHCMD("brightnessctl set 5%+")                 },
-    {0,                                     XKB_KEY_XF86MonBrightnessDown, spawn,            SHCMD("brightnessctl set 5%-")                 },
+#define DWLB_TOGGLE "dwlb", "-toggle-visibility", "selected"
 #define VOLUME_UP "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof someblocks)"
 #define VOLUME_DOWN "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof someblocks)"
 #define VOLUME_MUTE "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)"
-    {0,                                     XKB_KEY_XF86AudioRaiseVolume,  spawn,            SHCMD(VOLUME_UP)                               },
-    {0,                                     XKB_KEY_XF86AudioLowerVolume,  spawn,            SHCMD(VOLUME_DOWN)                             },
-    {0,                                     XKB_KEY_XF86AudioMute,         spawn,            SHCMD(VOLUME_MUTE)                             },
-    {WLR_MODIFIER_SHIFT,                    XKB_KEY_XF86AudioMute,         spawn,            {.v = (const char *[]){"sinkchoose", NULL}}    },
-    {0,                                     XKB_KEY_Print,                 spawn,            {.v = (const char *[]){"screenshott", NULL}}   },
-    {0,                                     XKB_KEY_XF86Launch9,           spawn,            {.v = (const char *[]){"screenrecord", NULL}}  },
- // fn+print_screen if present on keyboard
-    {WLR_MODIFIER_CTRL,                     XKB_KEY_F12,                   spawn,            {.v = (const char *[]){"screensend", NULL}}    },
-    {MODKEY,                                XKB_KEY_Print,                 spawn,            {.v = (const char *[]){"showshot", NULL}}      },
-    {MODKEY | WLR_MODIFIER_CTRL,            XKB_KEY_Print,                 spawn,            {.v = (const char *[]){"showshot", "-c", NULL}}},
- // show chars in print screen
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_Print,                 spawn,            {.v = (const char *[]){"showshot", "-d", NULL}}},
- // show screenshot directory
-    {WLR_MODIFIER_SHIFT,                    XKB_KEY_Print,                 spawn,            {.v = (const char *[]){"screensave", NULL}}    },
- // save screenshow
-    {MODKEY,                                XKB_KEY_F12,                   spawn,            {.v = (const char *[]){"clipsync", NULL}}      },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_F12,                   spawn,            {.v = (const char *[]){"clipsync", "-f", NULL}}},
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_B,                     spawn,            {.v = (const char *[]){"bookmarkselect", NULL}}},
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_T,                     spawn,            {.v = (const char *[]){"themeset", "-o", NULL}}},
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_L,                     spawn,            {.v = (const char *[]){"quicktrans", NULL}}    },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_Q,                     quit,             {0}                                            },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_Q,                     spawn,            SHCMD("killall someblocks")                    },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_S,                     spawn,            {.v = (const char *[]){"sus", NULL}}           },
-#define MODKEY_CTRL_SHIFT MODKEY | WLR_MODIFIER_SHIFT | WLR_MODIFIER_CTRL
-    {MODKEY_CTRL_SHIFT,                     XKB_KEY_S,                     spawn,            SHCMD("kill -45 $(pidof someblocks)")          },
-#define DWLB_TOGGLE "dwlb", "-toggle-visibility", "selected"
-    {MODKEY,                                XKB_KEY_b,                     spawn,            {.v = (const char *[]){DWLB_TOGGLE, NULL}}     },
-    {WLR_MODIFIER_ALT | WLR_MODIFIER_SHIFT, XKB_KEY_space,                 spawn,            SHCMD("kill -45 $(pidof someblocks)")          },
-    {MODKEY | WLR_MODIFIER_SHIFT,           XKB_KEY_P,                     spawn,            {.v = passsummon}                              },
+// toggling between having the system sleep after 4 minutes. Corresponds to sb-lock
+#define LOCK_TOGGLE "kill -45 $(pidof someblocks)"
+
+static const Key keys[] = {
+  /* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
+  /* modifier                          key                            function          argument */
+     /* Special, terminal spawn must remain first to get spawned in the same directory */
+    {MODKEY,                           XKB_KEY_space,                 spawn,            {.v = termcmd}                    },
+    /* window management */
+    {MODKEY,                           XKB_KEY_j,                     focusstack,       {.i = +1}                         },
+    {MODKEY,                           XKB_KEY_k,                     focusstack,       {.i = -1}                         },
+    {MODKEY,                           XKB_KEY_i,                     incnmaster,       {.i = +1}                         },
+    {MODKEY,                           XKB_KEY_d,                     incnmaster,       {.i = -1}                         },
+    {MODKEY,                           XKB_KEY_h,                     setmfact,         {.f = -0.05f}                     },
+    {MODKEY,                           XKB_KEY_l,                     setmfact,         {.f = +0.05f}                     },
+    {MODKEY,                           XKB_KEY_Return,                zoom,             {0}                               },
+    {MODKEY,                           XKB_KEY_s,                     setlayout,        {0}                               },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_C,                     killclient,       {0}                               },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_space,                 togglefloating,   {0}                               },
+    {MODKEY,                           XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT}         },
+    {MODKEY,                           XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT}        },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT}         },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT}        },
+    {MODKEY,                           XKB_KEY_Tab,                   view,             {0}                               },
+    {MODKEY,                           XKB_KEY_f,                     togglefullscreen, {0}                               },
+    {MODKEY,                           XKB_KEY_0,                     view,             {.ui = ~0}                        },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_parenright,            tag,              {.ui = ~0}                        },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Q,                     quit,             {0}                               },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Q,                     spawn,            SHCMD("killall someblocks")       },
+
+    /* app launch shortcuts */
+    {MODKEY,                           XKB_KEY_o,                     spawn,            {.v = fmsummon}                   },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Return,                spawn,            SPAWN("launcher")                 },
+    {MODKEY,                           XKB_KEY_q,                     spawn,            SPAWN("quickact")                 },
+    {MODKEY,                           XKB_KEY_w,                     spawn,            SPAWN("librewolf")                },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_W,                     spawn,            SPAWN("chromium")                 },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_M,                     spawn,            SPAWN("supersonic")               },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_P,                     spawn,            SPAWN("passmenu")                 },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_B,                     spawn,            SPAWN("bookmarkselect")           },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_L,                     spawn,            SPAWN("quicktrans")               },
+    {0,                                XKB_KEY_XF86Mail,              spawn,            SHCMD(TERMINAL MAIL)              },
+
+    /* very useful misc */
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_T,                     spawn,            SPAWN("themeset", "-o")           },
+    {MODKEY,                           XKB_KEY_b,                     spawn,            SPAWN(DWLB_TOGGLE)                },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_S,                     spawn,            SPAWN("sus")                      },
+    {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_s,                     spawn,            SHCMD(LOCK_TOGGLE) },
+    {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_w,                     togglewarpcursor, {0}                               },
+
+     /* layouts */
+    {MODKEY,                           XKB_KEY_t,                     setlayout,        {.v = &layouts[0]}                },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_F,                     setlayout,        {.v = &layouts[1]}                },
+    {MODKEY,                           XKB_KEY_m,                     setlayout,        {.v = &layouts[2]}                },
+    {MODKEY,                           XKB_KEY_backslash,             setlayout,        {.v = &layouts[3]}                },
+
+    /* media */
+    {0,                                XKB_KEY_XF86MonBrightnessUp,   spawn,            SPAWN("brightnessctl","set","5%+")},
+    {0,                                XKB_KEY_XF86MonBrightnessDown, spawn,            SPAWN("brightnessctl","set","5%-")},
+    {0,                                XKB_KEY_XF86AudioRaiseVolume,  spawn,            SHCMD(VOLUME_UP)                  },
+    {0,                                XKB_KEY_XF86AudioLowerVolume,  spawn,            SHCMD(VOLUME_DOWN)                },
+    {0,                                XKB_KEY_XF86AudioMute,         spawn,            SHCMD(VOLUME_MUTE)                },
+    {WLR_MODIFIER_SHIFT,               XKB_KEY_XF86AudioMute,         spawn,            SPAWN("sinkchoose")               },
+    {0,                                XKB_KEY_Print,                 spawn,            SPAWN("screenshott")              },
+    {WLR_MODIFIER_SHIFT,               XKB_KEY_Print,                 spawn,            SPAWN("screensave")               },
+    {MODKEY,                           XKB_KEY_Print,                 spawn,            SPAWN("showshot")                 },
+    // use an OCR and show chars from print screen
+    {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_Print,                 spawn,            SPAWN("showshot", "-c")           },
+    // show screenshot directory
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Print,                 spawn,            SPAWN("showshot", "-d")           },
+    {0,                                XKB_KEY_XF86Launch9,           spawn,            SPAWN("screenrecord")             },
+    {MODKEY,                           XKB_KEY_F12,                   spawn,            SPAWN("clipsync")                 },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_F12,                   spawn,            SPAWN("clipsync", "-f")           },
+
+    /* move floating windows with a mouse */
+    {MODKEY,                           XKB_KEY_Up,                    floathmovebykey,  {.i = -80}                        },
+    {MODKEY,                           XKB_KEY_Down,                  floathmovebykey,  {.i = +80}                        },
+    {MODKEY,                           XKB_KEY_Left,                  floatvmovebykey,  {.i = -80}                        },
+    {MODKEY,                           XKB_KEY_Right,                 floatvmovebykey,  {.i = +80}                        },
+
+    /* tags */
     TAGKEYS(XKB_KEY_1, XKB_KEY_exclam, 0),
     TAGKEYS(XKB_KEY_2, XKB_KEY_at, 1),
     TAGKEYS(XKB_KEY_3, XKB_KEY_numbersign, 2),
@@ -219,7 +226,7 @@ static const Key keys[] = {
     TAGKEYS(XKB_KEY_8, XKB_KEY_asterisk, 7),
     TAGKEYS(XKB_KEY_9, XKB_KEY_parenleft, 8),
 
- /* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server    */
+    /* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server    */
     {WLR_MODIFIER_CTRL | WLR_MODIFIER_ALT,  XKB_KEY_Terminate_Server,      quit,             {0}                                              },
 #define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
     CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6), CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
@@ -231,3 +238,4 @@ static const Button buttons[] = {
     {MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize}                                },
     {MODKEY, BTN_SIDE,   spawn,          {.v = (const char *[]){"quicktrans", "-c", NULL}}},
 };
+

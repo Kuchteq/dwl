@@ -348,6 +348,7 @@ static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglewarpcursor(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
 static void unmaplayersurfacenotify(struct wl_listener *listener, void *data);
 static void unmapnotify(struct wl_listener *listener, void *data);
@@ -2844,6 +2845,11 @@ toggleview(const Arg *arg)
 }
 
 void
+togglewarpcursor(const Arg *arg)
+{
+        warp_cursor = !warp_cursor;
+}
+void
 unlocksession(struct wl_listener *listener, void *data)
 {
 	SessionLock *lock = wl_container_of(listener, lock, unlock);
@@ -3084,7 +3090,7 @@ virtualpointer(struct wl_listener *listener, void *data)
 
 void
 warpcursor(const Client *c) {
-	if (cursor_mode != CurNormal) {
+	if (cursor_mode != CurNormal || !warp_cursor) {
 		return;
 	}
 	if (!c && selmon) {

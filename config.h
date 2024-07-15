@@ -7,6 +7,7 @@
 static const int          sloppyfocus               = 1; /* focus follows mouse */
 static const int          bypass_surface_visibility = 0; /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
              int          warp_cursor               = 1; /* toggle with alt+ctrl+w (mnemo warp), basically your mouse moves to the center of focus */
+             int          monaxis                   = 1; /* toggle with alt+apostrophe, 1 means horizontally, 0 means vertically*/
 static const int          smartborders              = 1;
 static const unsigned int borderpx                  = 2; /* border pixel of windows */
 static const float        bordercolor[]             = COLOR(0x7f7f7fff);
@@ -155,6 +156,7 @@ static const Key keys[] = {
     {MODKEY,                           XKB_KEY_s,                     setlayout,        {0}                               },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_C,                     killclient,       {0}                               },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_space,                 togglefloating,   {0}                               },
+    {MODKEY,                           XKB_KEY_apostrophe,            monaxischange,    {0} /* ↓ don't change these 4 */  },
     {MODKEY,                           XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT}         },
     {MODKEY,                           XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT}        },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT}         },

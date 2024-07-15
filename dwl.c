@@ -307,6 +307,7 @@ static void locksession(struct wl_listener *listener, void *data);
 static void maplayersurfacenotify(struct wl_listener *listener, void *data);
 static void mapnotify(struct wl_listener *listener, void *data);
 static void maximizenotify(struct wl_listener *listener, void *data);
+static void monaxischange(const Arg *arg);
 static void monocle(Monitor *m);
 static void motionabsolute(struct wl_listener *listener, void *data);
 static void motionnotify(uint32_t time, struct wlr_input_device *device, double sx,
@@ -1367,6 +1368,9 @@ Monitor *
 dirtomon(enum wlr_direction dir)
 {
 	struct wlr_output *next;
+        if (!monaxis) {
+                dir = dir == WLR_DIRECTION_RIGHT ? WLR_DIRECTION_UP : WLR_DIRECTION_DOWN;
+        }
 	if (!wlr_output_layout_get(output_layout, selmon->wlr_output))
 		return selmon;
 	if ((next = wlr_output_layout_adjacent_output(output_layout,
@@ -1825,6 +1829,9 @@ maximizenotify(struct wl_listener *listener, void *data)
 		wlr_xdg_surface_schedule_configure(c->surface.xdg);
 }
 
+static void monaxischange(const Arg *arg) {
+        monaxis = !monaxis;
+}
 void
 monocle(Monitor *m)
 {

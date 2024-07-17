@@ -129,7 +129,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define TERMINAL "foot"
 /* commands */
 static const char *termcmd[]      = {TERMINAL,    NULL};
-static const char *fmsummon[]     = {TERMINAL, "lf", "--command", "on-quit-prepare", NULL};
+static const char *fmsummon[]     = {TERMINAL, "-o", "environment.START_IN_LFCD=true", NULL};
 
 /* shell commands macros to help with keys array readability */
 #define MAIL " sh -c 'mailsync & ESCDELAY=0 neomutt'"

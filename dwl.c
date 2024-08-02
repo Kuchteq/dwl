@@ -545,6 +545,7 @@ arrange(Monitor *m)
 		m->lt[m->sellt]->arrange(m);
 	motionnotify(0, NULL, 0, 0, 0, 0);
 	checkidleinhibitor(NULL);
+        warpcursor(focustop(selmon));
 }
 
 void
@@ -1823,7 +1824,6 @@ mapnotify(struct wl_listener *listener, void *data)
 			focusclient(c, 1);
 			exclusive_focus = c;
 		}
-		warpcursor(c);
 		goto unset_fullscreen;
 	}
 

@@ -136,7 +136,8 @@ static const char *fmsummon[]     = {TERMINAL, "-o", "environment.START_IN_LFCD=
 #define DWLB_TOGGLE "dwlb", "-toggle-visibility", "selected"
 #define VOLUME_UP "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof someblocks)"
 #define VOLUME_DOWN "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof someblocks)"
-#define VOLUME_MUTE "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)"
+#define VOLUME_MUTE_TOGGLE "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof someblocks)"
+#define CAPTURE_MUTE_TOGGLE "amixer","sset","Capture","toggle"
 // toggling between having the system sleep after 4 minutes. Corresponds to sb-lock
 #define LOCK_TOGGLE "kill -45 $(pidof someblocks)"
 
@@ -186,6 +187,7 @@ static const Key keys[] = {
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_S,                     spawn,            SPAWN("sus")                      },
     {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_s,                     spawn,            SHCMD(LOCK_TOGGLE) },
     {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_w,                     togglewarpcursor, {0}                               },
+    {MODKEY,                           XKB_KEY_F5,                    spawn,            SPAWN("powertoggle")              },
 
      /* layouts */
     {MODKEY,                           XKB_KEY_t,                     setlayout,        {.v = &layouts[0]}                },
@@ -198,8 +200,9 @@ static const Key keys[] = {
     {0,                                XKB_KEY_XF86MonBrightnessDown, spawn,            SPAWN("brightnessctl","set","5%-")},
     {0,                                XKB_KEY_XF86AudioRaiseVolume,  spawn,            SHCMD(VOLUME_UP)                  },
     {0,                                XKB_KEY_XF86AudioLowerVolume,  spawn,            SHCMD(VOLUME_DOWN)                },
-    {0,                                XKB_KEY_XF86AudioMute,         spawn,            SHCMD(VOLUME_MUTE)                },
+    {0,                                XKB_KEY_XF86AudioMute,         spawn,            SHCMD(VOLUME_MUTE_TOGGLE)         },
     {WLR_MODIFIER_SHIFT,               XKB_KEY_XF86AudioMute,         spawn,            SPAWN("sinkchoose")               },
+    {0,                                XKB_KEY_XF86AudioMicMute,      spawn,            SPAWN(CAPTURE_MUTE_TOGGLE)               },
     {0,                                XKB_KEY_Print,                 spawn,            SPAWN("screenshott")              },
     {WLR_MODIFIER_SHIFT,               XKB_KEY_Print,                 spawn,            SPAWN("screensave")               },
     {MODKEY,                           XKB_KEY_Print,                 spawn,            SPAWN("showshot")                 },

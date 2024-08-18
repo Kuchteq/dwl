@@ -210,7 +210,7 @@ static const Key keys[] = {
     {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_Print,                 spawn,            SPAWN("showshot", "-c")           },
     // show screenshot directory
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Print,                 spawn,            SPAWN("showshot", "-d")           },
-    {0,                                XKB_KEY_XF86Launch9,           spawn,            SPAWN("screenrecord")             },
+    {WLR_MODIFIER_CTRL,                XKB_KEY_Print,                 spawn,            SPAWN("screenrecord")             },
     {MODKEY,                           XKB_KEY_F12,                   spawn,            SPAWN("clipsync")                 },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_F12,                   spawn,            SPAWN("clipsync", "-f")           },
 

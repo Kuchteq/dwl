@@ -53,8 +53,8 @@ static const MonitorRule monrules[] = {
   /* defaults */
     {"eDP-1",    0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1},
     {"HDMI-A-1", 0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1},
-    {"DP-2",     0.50f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1},
     {"DP-1",     0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1},
+    { NULL,      0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1},
 };
 
 /* keyboard */
@@ -173,7 +173,7 @@ static const Key keys[] = {
     {MODKEY,                           XKB_KEY_o,                     spawn,            {.v = fmsummon}                   },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Return,                spawn,            SPAWN("launcher")                 },
     {MODKEY,                           XKB_KEY_q,                     spawn,            SPAWN("quickact")                 },
-    {MODKEY,                           XKB_KEY_w,                     spawn,            SPAWN("librewolf")                },
+    {MODKEY,                           XKB_KEY_w,                     spawn,            SPAWN("firefox")                  },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_W,                     spawn,            SPAWN("chromium")                 },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_M,                     spawn,            SPAWN("supersonic")               },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_P,                     spawn,            SPAWN("passmenu")                 },

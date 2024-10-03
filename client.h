@@ -332,7 +332,8 @@ client_set_fullscreen(Client *c, int fullscreen)
 }
 
 static inline void
-client_set_scale(struct wlr_surface *s, float scale) {
+client_set_scale(struct wlr_surface *s, float scale)
+{
 	wlr_fractional_scale_v1_notify_scale(s, scale);
 	wlr_surface_set_preferred_buffer_scale(s, (int32_t)ceilf(scale));
 }
@@ -357,8 +358,11 @@ static inline void
 client_set_tiled(Client *c, uint32_t edges)
 {
 #ifdef XWAYLAND
-	if (client_is_x11(c))
+	if (client_is_x11(c)) {
+		wlr_xwayland_surface_set_maximized(c->surface.xwayland,
+				edges != WLR_EDGE_NONE, edges != WLR_EDGE_NONE);
 		return;
+  }
 #endif
 	if (wl_resource_get_version(c->surface.xdg->toplevel->resource)
 			>= XDG_TOPLEVEL_STATE_TILED_RIGHT_SINCE_VERSION) {

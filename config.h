@@ -18,7 +18,7 @@ static const float        urgentcolor[]             = COLOR(0xff0000ff);
 static const float fullscreen_bg[] = {0.1f, 0.1f, 0.1f, 1.0f};
 
 /* tagging - TAGCOUNT must be no greater than 31 */
-#define TAGCOUNT (9)
+#define TAGCOUNT (27)
 
 static int log_level = WLR_ERROR;
 
@@ -216,6 +216,10 @@ static const Key keys[] = {
     {MODKEY,                           XKB_KEY_Down,                  floathmovebykey,  {.i = +80}                        },
     {MODKEY,                           XKB_KEY_Left,                  floatvmovebykey,  {.i = -80}                        },
     {MODKEY,                           XKB_KEY_Right,                 floatvmovebykey,  {.i = +80}                        },
+
+    /* workspaces */
+    { MODKEY,                          XKB_KEY_F1,                    moveworkspace,    {.i = -1}                         },
+    { MODKEY,                          XKB_KEY_F2,                    moveworkspace,    {.i = +1}                         },
 
     /* tags */
     TAGKEYS(XKB_KEY_1, XKB_KEY_exclam, 0),

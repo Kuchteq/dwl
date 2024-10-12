@@ -211,6 +211,7 @@ struct Monitor {
 	int nmaster;
 	char ltsymbol[16];
 	int asleep;
+	unsigned int last_workspace_tag[3];
 };
 
 typedef struct {
@@ -316,6 +317,7 @@ static void motionnotify(uint32_t time, struct wlr_input_device *device, double 
 		double sy, double sx_unaccel, double sy_unaccel);
 static void motionrelative(struct wl_listener *listener, void *data);
 static void moveresize(const Arg *arg);
+static void moveworkspace(const Arg *arg);
 static int needsborder(Client *c);
 static void outputmgrapply(struct wl_listener *listener, void *data);
 static void outputmgrapplyortest(struct wlr_output_configuration_v1 *config, int test);
@@ -420,6 +422,7 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
+static int workspace = 0;
 
 #ifdef XWAYLAND
 static void activatex11(struct wl_listener *listener, void *data);
@@ -1069,6 +1072,8 @@ createmon(struct wl_listener *listener, void *data)
 		}
 	}
 
+        m->last_workspace_tag[1] = 1;
+        m->last_workspace_tag[2] = 1;
 	/* The mode is a tuple of (width, height, refresh rate), and each
 	 * monitor supports only a specific set of modes. We just pick the
 	 * monitor's preferred mode; a more sophisticated compositor would let
@@ -1859,6 +1864,26 @@ unset_fullscreen:
 			setfullscreen(w, 0);
 	}
 }
+void
+moveworkspace(const Arg *arg)
+{
+	Arg viewarg;
+	struct Monitor *m;
+	int previous_workspace = workspace;
+	struct Monitor *refocus_monitor = selmon;
+	if (workspace + arg->i < 0 || workspace + arg->i > 2 * 9)
+		return;
+	workspace += arg->i * 9;
+	wl_list_for_each(m, &mons, link)
+	{
+		selmon = m;
+		m->last_workspace_tag[previous_workspace / 9] =
+			selmon->tagset[selmon->seltags] >> previous_workspace;
+		viewarg.ui = m->last_workspace_tag[workspace / 9];
+		view(&viewarg);
+	}
+	selmon = refocus_monitor;
+}
 
 void
 maximizenotify(struct wl_listener *listener, void *data)
@@ -2187,8 +2212,10 @@ printstatus(void)
 
 		printf("%s selmon %u\n", m->wlr_output->name, m == selmon);
 		printf("%s tags %"PRIu32" %"PRIu32" %"PRIu32" %"PRIu32"\n",
-			m->wlr_output->name, occ, m->tagset[m->seltags], sel, urg);
+			m->wlr_output->name, occ >> workspace, m->tagset[m->seltags] >> workspace, 
+                        sel >> workspace, urg >> workspace);
 		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
+		printf("%s workspace %"PRIu32"\n", m->wlr_output->name, workspace/9);
 	}
 	fflush(stdout);
 }
@@ -2757,10 +2784,11 @@ void
 tag(const Arg *arg)
 {
 	Client *sel = focustop(selmon);
-	if (!sel || (arg->ui & TAGMASK) == 0)
+	int uiw = arg->ui << workspace;
+	if (!sel || (uiw & TAGMASK) == 0)
 		return;
 
-	sel->tags = arg->ui & TAGMASK;
+	sel->tags = uiw & TAGMASK;
 	focusclient(focustop(selmon), 1);
 	arrange(selmon);
 	printstatus();
@@ -3060,18 +3088,18 @@ void
 view(const Arg *arg)
 {
 	size_t i, tmptag;
-
-	if (!selmon || (arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
+        int uiw = arg->ui << workspace;
+	if (!selmon || (uiw & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
 	selmon->seltags ^= 1; /* toggle sel tagset */
-	if (arg->ui & TAGMASK) {
-		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
+	if (uiw & TAGMASK) {
+		selmon->tagset[selmon->seltags] = uiw & TAGMASK;
 		selmon->pertag->prevtag = selmon->pertag->curtag;
 
-		if (arg->ui == TAGMASK)
+		if (uiw == TAGMASK)
 			selmon->pertag->curtag = 0;
 		else {
-			for (i = 0; !(arg->ui & 1 << i); i++) ;
+			for (i = 0; !(uiw & 1 << i); i++) ;
 			selmon->pertag->curtag = i + 1;
 		}
 	} else {

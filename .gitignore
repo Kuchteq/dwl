@@ -5,3 +5,4 @@ dwl
 .ccls-cache
 dwl-*.pkg.tar.zst
 pkg
+.cache

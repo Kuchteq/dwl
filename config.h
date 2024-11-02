@@ -199,7 +199,7 @@ static const Key keys[] = {
     {0,                                XKB_KEY_XF86AudioLowerVolume,  spawn,            SHCMD(VOLUME_DOWN)                },
     {0,                                XKB_KEY_XF86AudioMute,         spawn,            SHCMD(VOLUME_MUTE_TOGGLE)         },
     {WLR_MODIFIER_SHIFT,               XKB_KEY_XF86AudioMute,         spawn,            SPAWN("sinkchoose")               },
-    {0,                                XKB_KEY_XF86AudioMicMute,      spawn,            SPAWN(CAPTURE_MUTE_TOGGLE)               },
+    {0,                                XKB_KEY_XF86AudioMicMute,      spawn,            SPAWN(CAPTURE_MUTE_TOGGLE)        },
     {0,                                XKB_KEY_Print,                 spawn,            SPAWN("screenshott")              },
     {WLR_MODIFIER_SHIFT,               XKB_KEY_Print,                 spawn,            SPAWN("screensave")               },
     {MODKEY,                           XKB_KEY_Print,                 spawn,            SPAWN("showshot")                 },
@@ -209,7 +209,8 @@ static const Key keys[] = {
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Print,                 spawn,            SPAWN("showshot", "-d")           },
     {WLR_MODIFIER_CTRL,                XKB_KEY_Print,                 spawn,            SPAWN("screenrecord")             },
     {MODKEY,                           XKB_KEY_F12,                   spawn,            SPAWN("clipsync")                 },
-    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_F12,                   spawn,            SPAWN("clipsync", "-f")           },
+    {WLR_MODIFIER_MOD5,                XKB_KEY_F12,                   spawn,            SPAWN("clipsync", "-f")           },
+    {MODKEY,                           XKB_KEY_F11,                   spawn,            SPAWN("sb-syncthing")             },
 
     /* move floating windows with a mouse */
     {MODKEY,                           XKB_KEY_Up,                    floathmovebykey,  {.i = -80}                        },

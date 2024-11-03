@@ -1,0 +1,257 @@
+diff --git a/dwl.c b/dwl.c
+index 4bf7d08..cb2cd64 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -8,6 +8,7 @@
+ #include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <sys/wait.h>
+ #include <time.h>
+ #include <unistd.h>
+@@ -246,6 +247,12 @@ typedef struct {
+ 	struct wl_listener destroy;
+ } SessionLock;
+ 
++typedef struct {
++	const char *cmd; /* command to run a menu */
++	void (*feed)(FILE *f); /* feed input to menu */
++	void (*action)(char *line); /* do action based on menu output */
++} Menu;
++
+ /* function declarations */
+ static void applybounds(Client *c, struct wlr_box *bbox);
+ static void applyrules(Client *c);
+@@ -310,6 +317,10 @@ static void killclient(const Arg *arg);
+ static void locksession(struct wl_listener *listener, void *data);
+ static void mapnotify(struct wl_listener *listener, void *data);
+ static void maximizenotify(struct wl_listener *listener, void *data);
++static void menu(const Arg *arg);
++static int menuloop(void *data);
++static void menuwinfeed(FILE *f);
++static void menuwinaction(char *line);
+ static void monaxischange(const Arg *arg);
+ static void monocle(Monitor *m);
+ static void motionabsolute(struct wl_listener *listener, void *data);
+@@ -424,6 +435,11 @@ static struct wl_list mons;
+ static Monitor *selmon;
+ static int workspace = 0;
+ 
++static struct wl_event_source *menu_source;
++static pid_t menu_pid;
++static int menu_fd;
++static const Menu *menu_current;
++
+ #ifdef XWAYLAND
+ static void activatex11(struct wl_listener *listener, void *data);
+ static void associatex11(struct wl_listener *listener, void *data);
+@@ -704,6 +720,7 @@ cleanup(void)
+ 	wlr_xwayland_destroy(xwayland);
+ 	xwayland = NULL;
+ #endif
++	wl_event_source_remove(menu_source);
+ 	wl_display_destroy_clients(dpy);
+ 	if (child_pid > 0) {
+ 		kill(-child_pid, SIGTERM);
+@@ -1735,6 +1752,189 @@ keypress(struct wl_listener *listener, void *data)
+ 			event->keycode, event->state);
+ }
+ 
++void
++menu(const Arg *arg)
++{
++	FILE *f;
++	pid_t pid;
++	int fd_right[2], fd_left[2];
++
++	if (!selmon || menu_pid != 0)
++		return;
++
++	menu_current = arg->v;
++
++	if (pipe(fd_right) == -1 || pipe(fd_left) == -1)
++		return;
++	if ((pid = fork()) == -1)
++		return;
++	if (pid == 0) {
++		close(fd_right[1]);
++		close(fd_left[0]);
++		dup2(fd_right[0], STDIN_FILENO);
++		close(fd_right[0]);
++		dup2(fd_left[1], STDOUT_FILENO);
++		close(fd_left[1]);
++
++		execl("/bin/sh", "/bin/sh", "-c", menu_current->cmd, NULL);
++		die("dwl: execl %s failed:", "/bin/sh");
++	}
++
++	close(fd_right[0]);
++	close(fd_left[1]);
++
++	if (!(f = fdopen(fd_right[1], "w")))
++		return;
++	menu_current->feed(f);
++	fclose(f);
++
++	menu_pid = pid;
++	menu_fd = fd_left[0];
++	wl_event_source_timer_update(menu_source, 10);
++}
++
++int
++menuloop(void *data)
++{
++	FILE *f;
++	pid_t pid;
++	char line[256], *s;
++
++	/* If process is still running, wait for another 50 ms */
++	if ((pid = waitpid(menu_pid, NULL, WNOHANG)) == 0) {
++		wl_event_source_timer_update(menu_source, 10);
++		return 0;
++	}
++
++	menu_pid = 0;
++
++	if (!(f = fdopen(menu_fd, "r")))
++		return 0;
++	if (fgets(line, sizeof(line), f)) {
++		if ((s = strchr(line, '\n')))
++			*s = '\0';
++		menu_current->action(line);
++	}
++	fclose(f);
++	return 0;
++}
++char *menuappidtoicon(const char *appid) {
++        static char icon[5];
++        if (strcmp(appid, "firefox") == 0)
++                strcpy(icon, "󰈹");
++        else if (strcmp(appid, "term") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "lfcd") == 0)
++                strcpy(icon, "󱉆");
++        else if (strcmp(appid, "nvim") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "org.telegram.desktop") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "chromium") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "codium-url-handler") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "thunderbird") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "org.inkscape.Inkscape") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "jetbrains-studio") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "imv") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "mpv") == 0)
++                strcpy(icon, "󰷝");
++        else if (strcmp(appid, "gimp-2.99") == 0)
++                strcpy(icon, "");
++        else if (strcmp(appid, "org.kde.kdenlive") == 0)
++                strcpy(icon, "");
++        else
++                strcpy(icon, "");
++        
++        return icon;
++
++}
++void
++menuwinfeed(FILE *f)
++{
++	Client *c;
++	const char *title;
++	const char *appid;
++	char *merged;
++	struct wl_list *(overview[9]) = { NULL };
++        struct element {
++                char *text;
++                struct wl_list link;
++        };
++        struct element *e, *tmp;
++
++        wl_list_for_each(c, &fstack, flink) {
++            int tag = __builtin_ctz(c->tags);
++            appid = client_get_appid(c);
++            title = client_get_title(c);
++    
++            // Allocate memory for merged string
++            merged = ecalloc(sizeof(char),strlen(appid) + strlen(title) + 12);
++            sprintf(merged, "%d | %s %s: %s", tag+1, menuappidtoicon(appid), appid, title);
++    
++            if (overview[tag] == NULL) {
++                overview[tag] = ecalloc(sizeof(char), sizeof(struct wl_list));
++                wl_list_init(overview[tag]);
++            }
++    
++            // Create a new element and insert it into the list
++            e = ecalloc(1, sizeof(struct wl_list));
++            e->text = merged;
++            wl_list_insert(overview[tag], &e->link);
++        }
++    
++        for (int i = 0; i < 9; i++) {
++            if (overview[i] == NULL) {
++                continue;
++            }
++            wl_list_for_each_safe(e, tmp, overview[i], link) {
++                fprintf(f, "%s\n", e->text);
++                // free(e->text);
++                // free(e);
++            }
++            // free(overview[i]);
++        }
++}
++
++
++void
++menuwinaction(char *line)
++{
++	Client *c;
++	Monitor *prevm = selmon;
++	const char *title;
++	const char *appid;
++	char *merged;
++
++	if (!selmon)
++		return;
++
++	wl_list_for_each(c, &fstack, flink) {
++		if (!(appid = client_get_appid(c)))
++			appid = "";
++		if (!(title = client_get_title(c)))
++			continue;
++                merged = ecalloc(sizeof(char), strlen(appid) + strlen(title) + 11); //+6 to account for num, |, :, 2*space + NULL term
++		sprintf(merged, "%d | %s %s: %s", __builtin_ctz(c->tags)+1, menuappidtoicon(appid), appid, title);
++		if (strcmp(line, merged) == 0)
++			goto found;
++	}
++	return;
++
++found:
++	focusclient(c, 1);
++	wlr_cursor_move(cursor, NULL, selmon->m.x - prevm->m.x , 0);
++	selmon->seltags ^= 1; /* toggle sel tagset */
++	selmon->tagset[selmon->seltags] = c->tags;
++	arrange(selmon);
++	printstatus();
++}
++
+ void
+ keypressmod(struct wl_listener *listener, void *data)
+ {
+@@ -2743,6 +2943,10 @@ setup(void)
+ 	 * e.g when running in the x11 backend or the wayland backend and the
+ 	 * compositor has Xwayland support */
+ 	unsetenv("DISPLAY");
++
++	menu_source = wl_event_loop_add_timer(
++			wl_display_get_event_loop(dpy), menuloop, NULL);
++
+ #ifdef XWAYLAND
+ 	/*
+ 	 * Initialise the XWayland X server.

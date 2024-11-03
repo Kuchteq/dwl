@@ -1678,7 +1678,9 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 				Client *sel = focustop(selmon);
 				// Pass the keypress to client
 				if ( sel && client_get_appid(sel) != NULL 
-                                    && !strcmp(client_get_appid(sel), TERMINAL)) 
+                                    && (!strcmp(client_get_appid(sel), "term") || 
+                                        !strcmp(client_get_appid(sel), "lfcd")   || 
+                                        !strcmp(client_get_appid(sel), "nvim") )) 
 					return 0;
 			}
 			k->func(&k->arg);

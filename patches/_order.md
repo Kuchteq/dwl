@@ -7,3 +7,4 @@ patch < patches/terminalpass.patch
 patch < patches/floatmovebykey.patch
 patch < patches/togglewarpcursor.patch
 patch < patches/marbs-workspaces.patch
+patch < patches/marbs-menu.patch

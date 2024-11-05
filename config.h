@@ -64,6 +64,10 @@ static const struct xkb_rule_names xkb_rules = {
     .layout  = "plde",
     .model   = "pc104",
     .options = ""};
+static const Menu menus[] = {
+	/* command                            feed function        action function */
+	{ "bemenu -i -l 10 -p ",         menuwinfeed,         menuwinaction    },
+};
 static const int repeat_rate  = 30;
 static const int repeat_delay = 190;
 
@@ -141,7 +145,7 @@ static const char *fmsummon[]     = {TERMINAL, "-o", "environment.START_IN_LFCD=
 static const Key keys[] = {
   /* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
   /* modifier                          key                            function          argument */
-     /* Special, terminal spawn must remain first to get spawned in the same directory */
+     /* Special, terminal spawn must remain first to get spawned in the same directory. See terminalpass patch */
     {MODKEY,                           XKB_KEY_space,                 spawn,            {.v = termcmd}                    },
     /* window management */
     {MODKEY,                           XKB_KEY_j,                     focusstack,       {.i = +1}                         },
@@ -163,6 +167,7 @@ static const Key keys[] = {
     {MODKEY,                           XKB_KEY_f,                     togglefullscreen, {0}                               },
     {MODKEY,                           XKB_KEY_0,                     view,             {.ui = ~0}                        },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_parenright,            tag,              {.ui = ~0}                        },
+    {MODKEY,                           XKB_KEY_grave,                 menu,             {.v = &menus[0]}                  },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Q,                     quit,             {0}                               },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_Q,                     spawn,            SHCMD("killall someblocks")       },
 

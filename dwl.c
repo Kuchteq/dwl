@@ -1855,6 +1855,8 @@ char *menuappidtoicon(const char *appid) {
                 strcpy(icon, "");
         else if (strcmp(appid, "org.kde.kdenlive") == 0)
                 strcpy(icon, "");
+        else if (strcmp(appid, "rstudio") == 0)
+                strcpy(icon, "");
         else
                 strcpy(icon, "");
         

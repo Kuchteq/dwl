@@ -28,7 +28,7 @@ static const Rule rules[] = {
     {"firefox",     "Firefox — Sharing Indicator",     0, 2, -1},
     {"LibreWolf",   "LibreWolf — Sharing Indicator",   0, 2, -1},
     {"imv",         "shotpreview-",                    0, 1, -1},
-    {"foot",        "ocr-shotpreview-",                0, 2, -1},
+    {"term",        "ocr-shotpreview-",                0, 2, -1},
     {"floatermid",  "",                                0, 2, -1},
     {"imv",         "qrshare",                         0, 2, -1}, // Imv can't disguise as other app but can switch its window name
     {"imv",         "shotpreview-",                    0, 3, -1},
@@ -126,7 +126,9 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* Users with lower end specs might want to use footie instead of foot. This is a wrapper script
  * that activates foot's client - server capabilities reducing resource consumption with multiple
- * terminals and startup overhead. For now though this has some minor issues with dynamic theming. */
+ * terminals and startup overhead. For now though this has some minor issues with dynamic theming.
+ * Also the foot's appid is by default changed to "term" instead of just "foot".
+ * */
 #define TERMINAL "foot"
 /* commands */
 static const char *termcmd[]      = {TERMINAL,    NULL};

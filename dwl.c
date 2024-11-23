@@ -1847,7 +1847,7 @@ char *menuappidtoicon(const char *appid) {
                 strcpy(icon, "");
         else if (strcmp(appid, "jetbrains-studio") == 0)
                 strcpy(icon, "");
-        else if (strcmp(appid, "imv") == 0)
+        else if (strcmp(appid, "img") == 0)
                 strcpy(icon, "");
         else if (strcmp(appid, "mpv") == 0)
                 strcpy(icon, "󰷝");
@@ -1857,6 +1857,8 @@ char *menuappidtoicon(const char *appid) {
                 strcpy(icon, "");
         else if (strcmp(appid, "rstudio") == 0)
                 strcpy(icon, "");
+        else if (strcmp(appid, "figma-linux") == 0)
+                strcpy(icon, "");
         else
                 strcpy(icon, "");
         
@@ -1881,9 +1883,10 @@ menuwinfeed(FILE *f)
             int tag = __builtin_ctz(c->tags);
             appid = client_get_appid(c);
             title = client_get_title(c);
-    
-            // Allocate memory for merged string
-            merged = ecalloc(sizeof(char),strlen(appid) + strlen(title) + 12);
+
+	    // Allocate memory for merged string 4 for utf-8 icon, 2 for number, 4 for extra spaces, 1 for pipe, 1 for colon, 1 for NULL
+	    merged = ecalloc(sizeof(char), strlen(appid) + strlen(title) + 13);
+
             sprintf(merged, "%d | %s %s: %s", tag+1, menuappidtoicon(appid), appid, title);
     
             if (overview[tag] == NULL) {
@@ -1915,7 +1918,6 @@ void
 menuwinaction(char *line)
 {
 	Client *c;
-	Monitor *prevm = selmon;
 	const char *title;
 	const char *appid;
 	char *merged;
@@ -1928,7 +1930,7 @@ menuwinaction(char *line)
 			appid = "";
 		if (!(title = client_get_title(c)))
 			continue;
-                merged = ecalloc(sizeof(char), strlen(appid) + strlen(title) + 11); //+6 to account for num, |, :, 2*space + NULL term
+	        merged = ecalloc(sizeof(char), strlen(appid) + strlen(title) + 13);
 		sprintf(merged, "%d | %s %s: %s", __builtin_ctz(c->tags)+1, menuappidtoicon(appid), appid, title);
 		if (strcmp(line, merged) == 0)
 			goto found;
@@ -1937,11 +1939,7 @@ menuwinaction(char *line)
 
 found:
 	focusclient(c, 1);
-	wlr_cursor_move(cursor, NULL, selmon->m.x - prevm->m.x , 0);
-	selmon->seltags ^= 1; /* toggle sel tagset */
-	selmon->tagset[selmon->seltags] = c->tags;
-	arrange(selmon);
-	printstatus();
+        view(&(Arg){.ui = c->tags >> workspace}); // not sure how to explain this
 }
 
 void

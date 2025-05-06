@@ -27,7 +27,7 @@ static const Rule rules[] = {
   /* app_id     title                            tags_mask  floatpos   monitor */
     {"firefox",     "Firefox — Sharing Indicator",     0, 2, -1},
     {"LibreWolf",   "LibreWolf — Sharing Indicator",   0, 2, -1},
-    {"imv",         "shotpreview-",                    0, 1, -1},
+    {"shotpreview", "",                                0, 1, -1},
     {"term",        "ocr-shotpreview-",                0, 2, -1},
     {"floatermid",  "",                                0, 2, -1},
     {"imv",         "qrshare",                         0, 2, -1}, // Imv can't disguise as other app but can switch its window name
@@ -179,10 +179,13 @@ static const Key keys[] = {
     {MODKEY,                           XKB_KEY_q,                     spawn,            SPAWN("quickact")                 },
     {MODKEY,                           XKB_KEY_w,                     spawn,            SPAWN("firefox")                  },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_W,                     spawn,            SPAWN("chromium")                 },
-    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_M,                     spawn,            SPAWN("supersonic")               },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_M,                     spawn,            SPAWN("supersonic-desktop")       },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_P,                     spawn,            SPAWN("passmenu")                 },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_B,                     spawn,            SPAWN("bookmarkselect")           },
     {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_L,                     spawn,            SPAWN("quicktrans")               },
+    {MODKEY,                           XKB_KEY_a,                     spawn,            SPAWN("anyaction")                },
+    {MODKEY | WLR_MODIFIER_SHIFT,      XKB_KEY_A,                     spawn,            SPAWN("anyaction-alt")            },
+    {MODKEY | WLR_MODIFIER_CTRL,       XKB_KEY_a,                     spawn,            SPAWN("anyaction-modify")         },
     {0,                                XKB_KEY_XF86Mail,              spawn,            SHCMD(TERMINAL MAIL)              },
 
     /* very useful misc */
